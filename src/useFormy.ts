@@ -1,5 +1,6 @@
 import type { ErroryType } from 'errory'
 import { createErroryThings } from 'errory'
+import type { FormikProps } from 'formik'
 import { useFormik } from 'formik'
 import { withZodSchema } from 'formik-validator-zod'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -77,6 +78,23 @@ type UseFormySpecificProps<T extends z.ZodTypeAny | Record<string, any>, TSubmit
 }
 type UseFormyProps<T extends z.ZodTypeAny | Record<string, any>, TSubmitResult> = UseFormyGeneralProps &
   UseFormySpecificProps<T, TSubmitResult>
+export type Formy<
+  T extends z.ZodTypeAny | Record<string, any> = Record<string, any>,
+  TSubmitResult = any,
+> = FormikProps<ValuesInputType<T>> & {
+  informerProps: InformerProps
+  buttonProps: ButtonProps
+  formProps: {
+    onSubmit: FormikProps<ValuesInputType<T>>['handleSubmit']
+  }
+  getFieldyProps: (name: string) => {
+    name: string
+    formy: Formy<T, TSubmitResult>
+  }
+}
+type UseFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitResult>(
+  props: UseFormyProps<T, TSubmitResult>
+) => Formy<T, TSubmitResult>
 
 export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitResult>({
   successMessage = false,
@@ -107,7 +125,7 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
   toast,
   trackError,
   Errory,
-}: UseFormyProps<T, TSubmitResult>) => {
+}: UseFormyProps<T, TSubmitResult>): Formy<T, TSubmitResult> => {
   Errory = Errory || createErroryThings().Errory
   successMessagePolicy = successMessagePolicy ?? messagePolicy
   submitErrorMessagePolicy = submitErrorMessagePolicy ?? messagePolicy
@@ -339,11 +357,6 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
 
   return formy
 }
-
-export type UseFormy = typeof useFormy
-export type Formy<T extends z.ZodTypeAny | Record<string, any> = Record<string, any>, TSubmitResult = any> = ReturnType<
-  typeof useFormy<T, TSubmitResult>
->
 
 export const createUseFormy = (defaultProps: Partial<UseFormyGeneralProps>): UseFormy => {
   return (props) =>
