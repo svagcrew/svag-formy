@@ -78,10 +78,9 @@ type UseFormySpecificProps<T extends z.ZodTypeAny | Record<string, any>, TSubmit
 }
 type UseFormyProps<T extends z.ZodTypeAny | Record<string, any>, TSubmitResult> = UseFormyGeneralProps &
   UseFormySpecificProps<T, TSubmitResult>
-export type Formy<
-  T extends z.ZodTypeAny | Record<string, any> = Record<string, any>,
-  TSubmitResult = any,
-> = FormikProps<ValuesInputType<T>> & {
+export type Formy<T extends z.ZodTypeAny | Record<string, any> = any, TSubmitResult = any> = FormikProps<
+  ValuesInputType<T>
+> & {
   informerProps: InformerProps
   buttonProps: ButtonProps
   formProps: {
@@ -348,12 +347,7 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
     formProps,
     getFieldyProps,
   })
-  const formy = formik as typeof formik & {
-    informerProps: InformerProps
-    buttonProps: ButtonProps
-    formProps: typeof formProps
-    getFieldyProps: typeof getFieldyProps
-  }
+  const formy = formik as Formy<T, TSubmitResult>
 
   return formy
 }
