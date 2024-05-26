@@ -1,31 +1,23 @@
-import { createTextInputy, type TextInputFormyComponent, type TextInputUIComponent } from '@/components/TextInput'
 import type { UseFormyGeneralProps } from '@/useFormy'
-export type { Formy } from '@/useFormy'
 import { createUseFormy } from '@/useFormy'
+import { useFormyField } from '@/useFormyField'
 
-export const createFormyThings = <TTextInputUIComponent extends TextInputUIComponent>({
+export const createFormyThings = ({
   useFormyProps = {},
-  components = {},
 }: {
   useFormyProps?: UseFormyGeneralProps
-  components?: {
-    TextInput?: TTextInputUIComponent
-  }
 } = {}): {
   useFormy: ReturnType<typeof createUseFormy>
-  components: {
-    TextInputy: TTextInputUIComponent extends TextInputUIComponent
-      ? TextInputFormyComponent<TTextInputUIComponent>
-      : never
-  }
+  useFormyField: typeof useFormyField
 } => {
   const useFormy = createUseFormy(useFormyProps)
-  const formyComponents = {
-    ...(components.TextInput ? { TextInputy: createTextInputy(components.TextInput) } : {}),
-  }
 
   return {
     useFormy,
-    components: formyComponents as any,
+    useFormyField,
   }
 }
+
+export type { Formy } from '@/useFormy'
+export { useFormy } from '@/useFormy'
+export { useFormyField } from '@/useFormyField'

@@ -45,6 +45,7 @@ export type UseFormyGeneralProps = {
   successMessagePolicy?: 'informer' | 'toast'
   submitErrorMessagePolicy?: 'informer' | 'toast'
   validationErrorMessagePolicy?: 'informer' | 'toast'
+  validationErrorMessage?: React.ReactNode
   hideSuccessToastOnSubmit?: boolean
   hideFailureToastOnSubmit?: boolean
   resetOnSuccess?: boolean
@@ -78,15 +79,16 @@ type UseFormySpecificProps<T extends z.ZodTypeAny | Record<string, any>, TSubmit
 }
 type UseFormyProps<T extends z.ZodTypeAny | Record<string, any>, TSubmitResult> = UseFormyGeneralProps &
   UseFormySpecificProps<T, TSubmitResult>
-export type Formy<T extends z.ZodTypeAny | Record<string, any> = any, TSubmitResult = any> = FormikProps<
-  ValuesInputType<T>
+export type Formy<T extends z.ZodTypeAny | Record<string, any> = any, TSubmitResult = any> = Omit<
+  FormikProps<ValuesInputType<T>>,
+  'getFieldProps'
 > & {
   informerProps: InformerProps
   buttonProps: ButtonProps
   formProps: {
     onSubmit: FormikProps<ValuesInputType<T>>['handleSubmit']
   }
-  getFieldyProps: (name: string) => {
+  getFieldProps: (name: string) => {
     name: string
     formy: Formy<T, TSubmitResult>
   }
@@ -107,6 +109,7 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
   successMessagePolicy,
   submitErrorMessagePolicy,
   validationErrorMessagePolicy,
+  validationErrorMessage = 'Some fields are invalid',
   hideSuccessToastOnSubmit = false,
   hideFailureToastOnSubmit = true,
   resetOnSuccess = false,
@@ -252,7 +255,7 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
     ) {
       return {
         hidden: false,
-        message: 'Some fields are invalid',
+        message: validationErrorMessage,
         type: 'negative',
       }
     }
@@ -290,7 +293,7 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
       validationErrorMessagePolicy === 'toast'
     ) {
       return {
-        message: 'Some fields are invalid',
+        message: validationErrorMessage,
         type: 'negative',
         submitCount: formik.submitCount,
       }
@@ -335,7 +338,7 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
   const formProps = {
     onSubmit: formik.handleSubmit,
   }
-  const getFieldyProps = (name: string) => {
+  const getFieldProps = (name: string) => {
     return {
       name,
       formy,
@@ -345,9 +348,9 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
     informerProps,
     buttonProps,
     formProps,
-    getFieldyProps,
+    getFieldProps,
   })
-  const formy = formik as Formy<T, TSubmitResult>
+  const formy = formik as never as Formy<T, TSubmitResult>
 
   return formy
 }
