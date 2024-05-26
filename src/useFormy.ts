@@ -92,6 +92,8 @@ export type Formy<T extends z.ZodTypeAny | Record<string, any> = any, TSubmitRes
     name: string
     formy: Formy<T, TSubmitResult>
   }
+  failureCount: number
+  successCount: number
 }
 type UseFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitResult>(
   props: UseFormyProps<T, TSubmitResult>
@@ -141,6 +143,7 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
   const [successInformerVisible, setSuccessInformerVisible] = useState(false)
   const [failureInformerVisible, setFailureInformerVisible] = useState(false)
   const [submittingError, setSubmittingError] = useState<Error | null>(null)
+  const [successCount, setSuccessCount] = useState(0)
   const hideSuccessInformerTimeoutRef = useRef<null | ReturnType<typeof setTimeout>>(null)
   const hideFailureInformerTimeoutRef = useRef<null | ReturnType<typeof setTimeout>>(null)
   const successToastIdRef = useRef<null | undefined | string>(null)
@@ -181,6 +184,7 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
           valuesInput,
           valuesOutput,
         })
+        setSuccessCount((prev) => prev + 1)
         const successMessageNormalizedHere =
           typeof successMessage === 'function'
             ? successMessage({ valuesInput, valuesOutput, submitResult })
@@ -232,6 +236,10 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
       }
     },
   })
+
+  const failureCount = useMemo(() => {
+    return formik.submitCount - successCount
+  }, [successCount, formik.submitCount])
 
   const informerProps = useMemo<InformerProps>((): InformerProps => {
     if (
@@ -349,6 +357,8 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
     buttonProps,
     formProps,
     getFieldProps,
+    failureCount,
+    successCount,
   })
   const formy = formik as never as Formy<T, TSubmitResult>
 
