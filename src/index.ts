@@ -1,6 +1,6 @@
-import type { UseFormyGeneralProps } from '@/useFormy'
-import { createUseFormy } from '@/useFormy'
-import { useFormyField } from '@/useFormyField'
+import type { UseFormyGeneralProps } from '@/useFormy.js'
+import { createUseFormy } from '@/useFormy.js'
+import { useFormyField } from '@/useFormyField.js'
 
 export const createFormyThings = ({
   useFormyProps = {},
@@ -18,6 +18,6 @@ export const createFormyThings = ({
   }
 }
 
-export type { Formy } from '@/useFormy'
-export { useFormy } from '@/useFormy'
-export { useFormyField } from '@/useFormyField'
+export type { Formy } from '@/useFormy.js'
+export { useFormy } from '@/useFormy.js'
+export { useFormyField } from '@/useFormyField.js'

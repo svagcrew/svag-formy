@@ -1,4 +1,4 @@
-import type { Formy } from '@/useFormy'
+import type { Formy } from '@/useFormy.js'
 import get from 'lodash/get.js'
 
 const normalizeError = (e: any): string | null => {
