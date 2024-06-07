@@ -26,7 +26,7 @@ type InformerProps = {
 }
 type ToastProps = {
   type: 'positive' | 'negative'
-  duration?: number | false
+  duration?: number
   message: React.ReactNode
 }
 type ButtonProps = {
@@ -35,12 +35,12 @@ type ButtonProps = {
 }
 
 export type UseFormyGeneralProps = {
-  informerDuration?: number | false
-  successInformerDuration?: number | false
-  failureInformerDuration?: number | false
-  toastDuration?: number | false
-  successToastDuration?: number | false
-  failureToastDuration?: number | false
+  informerDuration?: number
+  successInformerDuration?: number
+  failureInformerDuration?: number
+  toastDuration?: number
+  successToastDuration?: number
+  failureToastDuration?: number
   messagePolicy?: 'informer' | 'toast'
   successMessagePolicy?: 'informer' | 'toast'
   submitErrorMessagePolicy?: 'informer' | 'toast'
@@ -190,7 +190,12 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
             ? successMessage({ valuesInput, valuesOutput, submitResult })
             : successMessage
         setSuccessMessageNormalized(successMessageNormalizedHere)
-        if (successMessagePolicy === 'toast' && showSuccessMessage && successMessageNormalizedHere) {
+        if (
+          successMessagePolicy === 'toast' &&
+          showSuccessMessage &&
+          successMessageNormalizedHere &&
+          successToastDuration
+        ) {
           // eslint-disable-next-line require-atomic-updates
           successToastIdRef.current = toast?.({
             message: successMessageNormalizedHere,
@@ -213,7 +218,7 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
       } catch (error: any) {
         const errory = Errory.toErrory(error)
         setSubmittingError(error)
-        if (submitErrorMessagePolicy === 'toast' && showSubmittingErrorMessage) {
+        if (submitErrorMessagePolicy === 'toast' && showSubmittingErrorMessage && failureToastDuration) {
           // eslint-disable-next-line require-atomic-updates
           failureToastIdRef.current = toast?.({
             message: errory.message,
@@ -316,7 +321,7 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
     validationErrorMessagePolicy,
   ])
   useEffect(() => {
-    if (validationErrorToastProps !== null) {
+    if (validationErrorToastProps !== null && failureToastDuration) {
       toast?.({ ...validationErrorToastProps, duration: failureToastDuration })
     }
   }, [JSON.stringify(validationErrorToastProps)])
