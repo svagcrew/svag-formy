@@ -94,6 +94,8 @@ export type Formy<T extends z.ZodTypeAny | Record<string, any> = any, TSubmitRes
   }
   failureCount: number
   successCount: number
+  removeArrayItem: (name: string, index: number) => void
+  addArrayItem: (name: string, item: any) => void
 }
 type UseFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitResult>(
   props: UseFormyProps<T, TSubmitResult>
@@ -357,6 +359,16 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
       formy,
     }
   }
+  const removeArrayItem = (name: string, index: number) => {
+    const array = formik.values[name] as any[]
+    array.splice(index, 1)
+    void formik.setFieldValue(name, array)
+  }
+  const addArrayItem = (name: string, item: any) => {
+    const array = formik.values[name] as any[]
+    array.push(item)
+    void formik.setFieldValue(name, array)
+  }
   Object.assign(formik, {
     informerProps,
     buttonProps,
@@ -364,6 +376,8 @@ export const useFormy = <T extends z.ZodTypeAny | Record<string, any>, TSubmitRe
     getFieldProps,
     failureCount,
     successCount,
+    removeArrayItem,
+    addArrayItem,
   })
   const formy = formik as never as Formy<T, TSubmitResult>
 
