@@ -16,8 +16,8 @@ const normalizeTouched = (t: any): boolean => {
   return false
 }
 
-export const useFormyField = ({ formy, name }: { formy: Formy; name: string }) => {
-  const value = get(formy.values, name)
+export const useFormyField = <T = any>({ formy, name }: { formy: Formy; name: string }) => {
+  const value = get(formy.values, name) as T
   const validationError = normalizeError(get(formy.errors, name))
   const touched = normalizeTouched(get(formy.touched, name))
   const invalid = touched && !!validationError
