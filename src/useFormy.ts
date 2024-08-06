@@ -60,7 +60,7 @@ export type UseFormyGeneralProps = {
   trackError?: (error: any, meta?: any) => any
   Errory?: ErroryType
   toast?: {
-    (props: ToastProps): string
+    (props: ToastProps): string | null
     dismiss: (id: string) => void
   }
 }
